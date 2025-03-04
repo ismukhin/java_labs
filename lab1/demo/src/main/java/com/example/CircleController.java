@@ -46,6 +46,7 @@ public class CircleController {
     Thread t;
     Thread shot_t;
     boolean play = false;
+    boolean paused = false;
     boolean shoted = false;
     
     void next() {
@@ -133,6 +134,12 @@ public class CircleController {
                     while(shoted) {
                         Platform.runLater(this::move_line);
                         try {
+                            if(paused) {
+                                synchronized (this) {
+                                    this.wait();
+                                }
+                                paused = false;
+                            }
                             Thread.sleep(100);
                         } catch (InterruptedException e) {
                             shoted = false;
@@ -148,12 +155,18 @@ public class CircleController {
 
     @FXML
     void clickOnContinue(ActionEvent event) {
-
+        synchronized (this) {
+            if (t != null || shot_t != null)
+                this.notifyAll();
+        }
+        paused = false;
     }
 
     @FXML
     void clickOnPause(ActionEvent event) {
-
+        if (t != null || shot_t != null) {
+            paused = true;
+        }
     }
 
     @FXML
@@ -167,6 +180,12 @@ public class CircleController {
                     while(play) {
                         Platform.runLater(this::next);
                         try {
+                            if(paused) {
+                                synchronized (this) {
+                                    this.wait();
+                                }
+                                paused = false;
+                            }
                             Thread.sleep(100);
                         } catch (InterruptedException e) {
                             play = false;
