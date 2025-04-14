@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class ServerInfo {
     public ArrayList<UserInfo> users = new ArrayList<>();
+    public ArrayList<UserInDB> leaders = new ArrayList<>();
     public GameStatus status;
     public int clientNumberWin;
     public double y1, y2, y3;

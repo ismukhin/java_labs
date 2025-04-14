@@ -30,7 +30,7 @@ public class mainServer {
     ArrayList<clientConnect> allConnection = new ArrayList<>();
     int numberClients = 0;
     int numberActive;
-
+    Database db = new Database();
     double height = 400.0;
     double widht = 759.0;
     protected final Object lockStatus = new Object();
@@ -77,6 +77,15 @@ public class mainServer {
                                 info.status = GameStatus.PLAY;
                             }
                         }
+                        else if (info.status == GameStatus.WIN) {
+                            for (int i = 0; i < info.users.size(); i++) {
+                                info.users.get(i).active = true;
+                            }
+                            if (numberReady == info.users.size() && numberReady != 0 &&
+                                numberNewGame == info.users.size()) {
+                                info.init();
+                            }
+                        }
                         else if (info.status == GameStatus.STOP) {
                             if (numberReady == info.users.size() && numberReady != 0) {
                                 System.out.println("INIT");
@@ -101,6 +110,9 @@ public class mainServer {
                             info.y3 = y3;
                         }
                     }
+                    //synchronized(lockDB) {
+                    //    info.leaders = db.getAllUsers();           
+                    //}
                     bcastServerData();
                     
                     try {
@@ -157,6 +169,7 @@ public class mainServer {
                     info.r2 = dis.readDouble();
                     info.r3 = dis.readDouble();
                     System.out.println(username);
+                    db.addUser(new UserInDB(username, 0));
                     if (info.status == GameStatus.PLAY) {
                         info.users.add(new UserInfo(username, false));
                     } else {

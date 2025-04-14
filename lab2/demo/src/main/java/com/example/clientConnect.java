@@ -99,15 +99,15 @@ public class clientConnect {
                 }
             }
             
-            //if (server.data.users.get(clientNumber - 1).score >= 10) {
-            //    synchronized(server.lockDB) {
-            //        server.db.incrWins(server.data.users.get(clientNumber - 1).username);          
-            //    }
-            //    synchronized (server.lockStatus) {
-            //        server.data.status = StatusGame.WIN;
-            //    }
-            //    server.data.clientNumberWin = clientNumber;
-            //}
+            if (server.info.users.get(clientnum - 1).score >= 10) {
+                synchronized(server.lockDB) {
+                    server.db.incrWins(server.info.users.get(clientnum - 1).username);          
+                }
+                synchronized (server.lockStatus) {
+                    server.info.status = GameStatus.WIN;
+                }
+                server.info.clientNumberWin = clientnum;
+            }
         }
     }
 

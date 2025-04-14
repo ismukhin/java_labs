@@ -14,6 +14,8 @@ import java.util.List;
 import com.google.gson.Gson;
 
 import javafx.application.Platform;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +24,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -81,8 +84,7 @@ public class CircleController {
         clientInfo.ya = event.getY();
     }
 
-    Table tabl = new Table();
-
+    private Stage leadersStage;
     private String user_name = "";
     private int score_num = 0;
     private int shots_num = 0;
@@ -444,16 +446,38 @@ public class CircleController {
 
     @FXML
     void clickOnTable(ActionEvent event) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("table" + ".fxml"));
-            Parent root = fxmlLoader.load();
-            Stage stage = new Stage();
-            stage.setTitle("TABLE");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (leadersStage != null) {
+            leadersStage.close();
+            leadersStage = null;
+        } else {
+            List<UserInDB> leaders = serverInfo.leaders;
+            leadersStage = createLeadersTable(leaders);
+            leadersStage.show();
         }
+    }
+
+    private Stage createLeadersTable(List<UserInDB> leaders) {
+        TableView<UserInDB> table = new TableView<>();
+        table.getItems().clear();
+
+        TableColumn<UserInDB, String> nameColumn = new TableColumn<>("Player");
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+        TableColumn<UserInDB, Integer> victories_num = new TableColumn<>("Victories_num");
+        victories_num.setCellValueFactory(new PropertyValueFactory<>("wins"));
+
+        table.getColumns().add(nameColumn);
+        table.getColumns().add(victories_num);
+
+        table.getItems().addAll(leaders);
+
+        Scene scene = new Scene(table);
+
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("Leaders");
+
+        return stage;
     }
 
 }
