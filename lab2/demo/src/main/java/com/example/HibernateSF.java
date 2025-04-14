@@ -11,7 +11,7 @@ public class HibernateSF {
         if (sessionFactory == null) {
             try {
                 Configuration configuration = new Configuration().
-                        configure();
+                        configure("hibernate.cfg.xml");
                 configuration.addAnnotatedClass(UserInDB.class);
                 StandardServiceRegistryBuilder builder = 
                         new StandardServiceRegistryBuilder().
